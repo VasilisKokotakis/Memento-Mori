@@ -250,7 +250,35 @@ class ResultScreen(BackgroundScreen):
             opacity=0
         )
         
-        # Weeks result
+        # Weeks lived container
+        self.lived_container = BoxLayout(
+            orientation='vertical',
+            size_hint_y=None,
+            height=100,
+            opacity=0
+        )
+
+        self.lived_label = Label(
+            text='',
+            font_size='28sp',
+            bold=True,
+            color=get_color_from_hex('#2980b9'),
+            size_hint_y=None,
+            height=60
+        )
+
+        self.lived_subtitle = Label(
+            text='WEEKS LIVED',
+            font_size='16sp',
+            color=get_color_from_hex('#7f8c8d'),
+            size_hint_y=None,
+            height=30
+        )
+
+        self.lived_container.add_widget(self.lived_label)
+        self.lived_container.add_widget(self.lived_subtitle)
+
+        # Weeks remaining container
         self.result_container = BoxLayout(
             orientation='vertical',
             size_hint_y=None,
@@ -259,7 +287,7 @@ class ResultScreen(BackgroundScreen):
         )
         
         self.weeks_label = Label(
-            text='',  # Will be set in on_pre_enter
+            text='',
             font_size='50sp',
             bold=True,
             color=get_color_from_hex('#27ae60'),
@@ -296,7 +324,7 @@ class ResultScreen(BackgroundScreen):
         )
         
         self.quote_text = Label(
-            text='',  # Will be set in on_pre_enter
+            text='',
             font_size='16sp',
             color=get_color_from_hex('#2c3e50'),
             halign='center',
@@ -324,7 +352,6 @@ class ResultScreen(BackgroundScreen):
             size_hint=(0.7, None),
             height=60,
             pos_hint={'center_x': 0.5},
-            
             opacity=0
         )
         self.restart_button.bind(on_press=self.go_to_intro)
@@ -332,6 +359,8 @@ class ResultScreen(BackgroundScreen):
         # Add widgets to layout
         self.layout.add_widget(BoxLayout(size_hint_y=0.05))  # Top spacer
         self.layout.add_widget(self.title_label)
+        self.layout.add_widget(BoxLayout(size_hint_y=0.05))  # Spacer
+        self.layout.add_widget(self.lived_container)
         self.layout.add_widget(BoxLayout(size_hint_y=0.05))  # Spacer
         self.layout.add_widget(self.result_container)
         self.layout.add_widget(BoxLayout(size_hint_y=0.05))  # Spacer
@@ -343,60 +372,48 @@ class ResultScreen(BackgroundScreen):
         self.add_widget(self.layout)
     
     def on_pre_enter(self):
-        # Get age from app
         app = App.get_running_app()
-        age = getattr(app, 'user_age', 30)  # Default to 30 if not set
+        age = getattr(app, 'user_age', 30)  # Default to 30
         
-        # Calculate weeks
         life_expectancy = 90
+        weeks_lived = int(age * 52.1775)
+        self.lived_label.text = f"{weeks_lived:,}"
         
-        # Choose appropriate content based on age
         if age >= life_expectancy:
-            # For those who have exceeded life expectancy
             self.title_label.text = 'LIFE WELL LIVED'
             self.weeks_label.text = 'BONUS TIME'
-            self.weeks_label.color = get_color_from_hex('#8e44ad')  # Purple for wisdom
+            self.weeks_label.color = get_color_from_hex('#8e44ad')
             self.weeks_subtitle.text = 'EVERY DAY IS A GIFT'
-            # Choose wisdom quote
             self.quote_text.text = choice(WISDOM_QUOTES)
         elif age >= 60:
-            # For seniors
             weeks_left = int((life_expectancy - age) * 52.1775)
             self.weeks_label.text = f"{weeks_left:,}"
-            self.weeks_label.color = get_color_from_hex('#e67e22')  # Orange for warmth
+            self.weeks_label.color = get_color_from_hex('#e67e22')
             self.title_label.text = 'YOUR GOLDEN YEARS'
-            # Choose senior quote
             self.quote_text.text = choice(SENIOR_QUOTES)
         else:
-            # For younger users
             weeks_left = int((life_expectancy - age) * 52.1775)
             self.weeks_label.text = f"{weeks_left:,}"
-            self.weeks_label.color = get_color_from_hex('#27ae60')  # Green for regular
-            # Choose regular quote
+            self.weeks_label.color = get_color_from_hex('#27ae60')
             self.quote_text.text = choice(QUOTES)
         
-        # Schedule animations
         Clock.schedule_once(self.start_animations, 0.2)
     
     def start_animations(self, dt):
-        # Title animation
         anim1 = Animation(opacity=1, duration=0.8)
         anim1.start(self.title_label)
         
-        # Result animation - delayed start
-        anim2 = Animation(opacity=0, duration=0.6) + \
-                Animation(opacity=1, duration=1.0)
-        Clock.schedule_once(lambda dt: anim2.start(self.result_container), 0.4)
+        anim_lived = Animation(opacity=0, duration=0.4) + Animation(opacity=1, duration=1.0)
+        Clock.schedule_once(lambda dt: anim_lived.start(self.lived_container), 0.2)
         
-        # Quote animation - delayed further
-        anim3 = Animation(opacity=0, duration=1.2) + \
-                Animation(opacity=1, duration=1.0)
-        Clock.schedule_once(lambda dt: anim3.start(self.quote_container), 0.8)
+        anim2 = Animation(opacity=0, duration=0.6) + Animation(opacity=1, duration=1.0)
+        Clock.schedule_once(lambda dt: anim2.start(self.result_container), 0.6)
         
-        # Button animation - last
-        anim4 = Animation(opacity=0, duration=1.8) + \
-                Animation(opacity=1, duration=0.8)
-        Clock.schedule_once(lambda dt: anim4.start(self.restart_button), 1.2)
+        anim3 = Animation(opacity=0, duration=1.2) + Animation(opacity=1, duration=1.0)
+        Clock.schedule_once(lambda dt: anim3.start(self.quote_container), 1.0)
+        
+        anim4 = Animation(opacity=0, duration=1.8) + Animation(opacity=1, duration=0.8)
+        Clock.schedule_once(lambda dt: anim4.start(self.restart_button), 1.4)
     
     def go_to_intro(self, instance):
         self.manager.transition = FadeTransition(duration=0.5)
@@ -404,15 +421,11 @@ class ResultScreen(BackgroundScreen):
 
 class LifeInWeeksApp(App):
     def build(self):
-        # Set app title and window size
         self.title = 'Life in Weeks'
         Window.size = (400, 600)
         Window.clearcolor = get_color_from_hex('#f0f5ff')
         
-        # Create screen manager
         sm = ScreenManager(transition=SlideTransition())
-        
-        # Add screens
         sm.add_widget(IntroScreen(name='intro'))
         sm.add_widget(AgeInputScreen(name='age_input'))
         sm.add_widget(ResultScreen(name='result'))
@@ -421,8 +434,3 @@ class LifeInWeeksApp(App):
 
 if __name__ == '__main__':
     LifeInWeeksApp().run()
-
-
-# # TODO:
-# 1. Add how many weeks have you lived already.
-# 2. Add tetragona in line and make them black to visualize it 
