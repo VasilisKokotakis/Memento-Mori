@@ -4,7 +4,6 @@
 **A small, thoughtful Kivy app to visualize the time you've lived and the time left, with inspirational quotes.**
 
 ![Memento-Mori Demo](demo/demo.gif)
-*Replace this GIF with your final demo video if needed.*
 
 ---
 
