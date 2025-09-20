@@ -56,8 +56,7 @@ By visualizing your life in weeks and pairing it with inspirational quotes, the 
 1. **Clone the repository**
 
 ```bash
-[git clone https://github.com/yourusername/memento-mori.git
-](https://github.com/VasilisKokotakis/Memento-Mori.git)
+git clone https://github.com/VasilisKokotakis/Memento-Mori.git
 cd memento-mori
 ```
 
