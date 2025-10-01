@@ -57,7 +57,7 @@ By visualizing your life in weeks and pairing it with inspirational quotes, the 
 
 ```bash
 git clone https://github.com/VasilisKokotakis/Memento-Mori.git
-cd memento-mori
+cd Memento-Mori
 ```
 
 2. **Install dependencies**
