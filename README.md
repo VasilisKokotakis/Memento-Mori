@@ -110,5 +110,5 @@ Please submit pull requests or open issues with suggestions.
 
 ## License
 
-This project is **MIT licensed**. Feel free to use and modify it for personal or educational purposes.
+This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
 
